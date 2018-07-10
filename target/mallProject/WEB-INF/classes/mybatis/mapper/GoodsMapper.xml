@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hj.dao.GoodsMapper">
+    <insert id="addGoods" useGeneratedKeys="true" keyProperty="sid">
+        INSERT INTO goods (<trim suffixOverrides=",">
+        <if test="gname!='' and gname !=null">gname,</if>
+        <if test="price!='' and price !=null">price,</if>
+        <if test="DESCRIPTION!='' and DESCRIPTION !=null">DESCRIPTION,</if>
+        <if test="category!='' and category !=null">category,</if>
+        <if test="shopID!='' and shopID !=null">shopID,</if>
+        <if test="salesvol!='' and salesvol !=null">salesvol,</if>
+        <if test="reserve!='' and reserve !=null">reserve,</if>
+        <if test="brandID!='' and brandID !=null">brandID,</if>
+        <if test="picUrl!='' and picUrl !=null">picUrl,</if>
+        <if test="isRecommand!='' and isRecommand !=null">isRecommand,</if>
+        <if test="typeNumber!='' and typeNumber !=null">typeNumber</if>
+    </trim>)values(<trim suffixOverrides=",">
+
+        <if test="gname!='' and gname !=null">#{gname},</if>
+        <if test="price!='' and price !=null">#{price},</if>
+        <if test="DESCRIPTION!='' and DESCRIPTION !=null">#{DESCRIPTION},</if>
+        <if test="category!='' and category !=null">#{category},</if>
+        <if test="shopID!='' and shopID !=null">#{shopID},</if>
+        <if test="salesvol!='' and salesvol !=null">#{salesvol},</if>
+        <if test="reserve!='' and reserve !=null">#{reserve},</if>
+        <if test="brandID!='' and brandID !=null">#{brandID},</if>
+        <if test="picUrl!='' and picUrl !=null">#{picUrl},</if>
+        <if test="isRecommand!='' and isRecommand !=null">#{isRecommand},</if>
+        <if test="typeNumber!='' and typeNumber !=null">#{typeNumber}</if>
+
+
+
+
+    </trim>)
+    </insert>
+
+
+    <update id="editGoods">
+        UPDATE goods
+        <set>
+            <trim suffixOverrides=",">
+            <if test="gname!='' and gname !=null">gname=#{gname},</if>
+            <if test="price!='' and price !=null">price=#{price},</if>
+            <if test="DESCRIPTION!='' and DESCRIPTION !=null">DESCRIPTION=#{DESCRIPTION},</if>
+            <if test="reserve!='' and reserve !=null">reserve=#{reserve},</if>
+            <if test="picUrl!='' and picUrl !=null">picUrl=#{picUrl},</if>
+            <if test="brandID!='' and brandID !=null">brandID=#{brandID},</if>
+            isRecommand=#{isRecommand}
+            </trim>
+        </set>
+        WHERE sid=#{sid}
+    </update>
+
+
+
+    <!-- 使用resultMap映射实体类和字段之间的一一对应关系 -->
+         <resultMap type="com.hj.po.Goods" id="GoodsResultMap">
+             <id property="sid" column="sid"/>
+             <result property="gname" column="gname"/>
+             <result property="price" column="price"/>
+             <result property="DESCRIPTION" column="DESCRIPTION"/>
+             <result property="category" column="category"/>
+             <result property="shopID" column="shopID"/>
+             <result property="salesvol" column="salesvol"/>
+             <result property="reserve" column="reserve"/>
+             <result property="typeNumber" column="typeNumber"/>
+             <result property="brandID" column="brandID"/>
+             <result property="picUrl" column="picUrl"/>
+             <result property="isRecommand" column="isRecommand"/>
+            <association property="brand" javaType="com.hj.po.Brand">
+              <id property="brandID" column="brandID"/>
+                <result property="brandName" column="brandName"/>
+            </association>
+        </resultMap>
+
+
+
+    <select id="datagridGood" resultMap="GoodsResultMap">
+        SELECT u.gname,u.sid,u.price,u.DESCRIPTION,u.category,u.shopID,u.salesvol,u.reserve,u.typeNumber,u.brandID,
+        u.picUrl,u.isRecommand,brand.brandName
+        FROM goods u LEFT JOIN brand ON u.brandID=brand.brandID WHERE 1=1
+        <if test="good.gname != '' and good.gname != null">
+            AND u.gname LIKE concat('%',#{good.gname},'%')
+        </if>
+        <if test="good.isRecommand != '' and good.isRecommand != null">
+            AND u.isRecommand = #{good.isRecommand}
+        </if>
+        <if test="good.brandID != '' and good.brandID != null">
+            AND u.brandID = #{good.brandID}
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            ORDER BY ${page.sort} ${page.order}
+        </if>
+        <if test="page.page>0">
+            limit #{page.start},#{page.end}
+        </if>
+    </select>
+    <select id="getDatagridTotal" resultType="long">
+        SELECT count(1) FROM goods WHERE 1=1
+        <if test="good.gname != '' and good.gname != null">
+            AND gname LIKE concat('%',#{good.gname},'%')
+        </if>
+        <if test="good.isRecommand != '' and good.isRecommand != null">
+            AND isRecommand = #{good.isRecommand}
+        </if>
+    </select>
+    </mapper>

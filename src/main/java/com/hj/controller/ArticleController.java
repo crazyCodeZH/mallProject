@@ -1,0 +1,46 @@
+package com.hj.controller;
+
+import com.hj.annotation.record;
+import com.hj.po.Article;
+import com.hj.po.easyui.DataGrid;
+import com.hj.po.easyui.Json;
+import com.hj.po.easyui.PageHelper;
+import com.hj.service.ArticleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ * Created by hongjin on 2017/12/11.
+ */
+@Controller
+@RequestMapping(value = "/BBS")
+public class ArticleController extends BaseController{
+    @Autowired
+   private ArticleService articleService;
+    @RequestMapping(value = "/articlelist",method = RequestMethod.GET)
+    public String articleList(){
+        return "BBS/articleList";
+    }
+    @RequestMapping(value = "/fileList",method = RequestMethod.GET)
+    public String discussList(){
+        return "BBS/fileManagerList";
+    }
+    @RequestMapping(value = "/userTalk",method = RequestMethod.GET)
+    public String Talk(){
+        return "BBS/userTalk";
+    }
+    @ResponseBody
+    @RequestMapping(value = "/getArticle")
+    @record(actionType = "查询",businessLogic = "帖子")
+    public DataGrid getArticle(String searchText, PageHelper pageHelper){
+        return articleService.getArticle(searchText,pageHelper);
+    }
+    @ResponseBody
+    @RequestMapping(value = "/editArticle",method = RequestMethod.POST)
+    public Json editArticle(Article article){
+        return articleService.editArticleDelete(article);
+    }
+}

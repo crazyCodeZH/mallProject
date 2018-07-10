@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hj.dao.BrandMapper">
+    <insert id="addBrand" useGeneratedKeys="true" keyProperty="sid">
+        INSERT INTO brand (<trim suffixOverrides=",">
+        <if test="brandName!='' and brandName !=null">brandName,</if>
+
+        <if test="shopID!='' and shopID !=null">shopID</if>
+    </trim>)values(<trim suffixOverrides=",">
+
+        <if test="brandName!='' and brandName !=null">#{brandName},</if>
+
+        <if test="shopID!='' and shopID !=null">#{shopID}</if>
+
+
+
+
+    </trim>)
+    </insert>
+
+
+    <update id="editBrand">
+        UPDATE brand
+        <set>
+            <if test="brandName!='' and brandName !=null">brandName=#{brandName},</if>
+            <if test="shopID!='' and shopID !=null">shopID=#{shopID},</if>
+
+
+        </set>
+        WHERE brandID=#{brandID}
+    </update>
+
+
+    <select id="datagridGood" resultType="brand">
+        SELECT *
+        FROM brand u WHERE 1=1
+        <if test="brand.brandName != '' and brand.brandName != null">
+            AND brandName LIKE concat('%',#{brand.brandName},'%')
+        </if>
+
+        <if test="page.sort != null and page.sort != ''">
+            ORDER BY ${page.sort} ${page.order}
+        </if>
+        <if test="page.page>0">
+            limit #{page.start},#{page.end}
+        </if>
+    </select>
+    <select id="getDatagridTotal" resultType="long">
+        SELECT count(1) FROM brand WHERE 1=1
+        <if test="brand.brandName != '' and brand.brandName != null">
+            AND brandName LIKE concat('%',#{brand.brandName},'%')
+        </if>
+    </select>
+</mapper>
